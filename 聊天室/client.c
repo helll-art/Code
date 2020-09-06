@@ -1,19 +1,20 @@
 #include<stdio.h>
 #include<string.h>
 #include<sys/socket.h>
-#include<netinet/in.h>
+#include<netinet/in.h> 
 #include<unistd.h>
 #include<pthread.h>
 #include<stdlib.h>
 #include<arpa/inet.h>
 #include<sys/epoll.h>
 #include<time.h>
+#include<fcntl.h>
 
 #include"my_pack.h"
 
 
 
-#define PORT 8888
+//#define PORT 8014
 #define MAX_SIZE 1024
 #define EPOLLMAX 1024
 
@@ -33,15 +34,20 @@
 #define CREATE_GROUP 108
 #define ADD_GROUP 1081
 #define RETURN_GROUP 1082
+#define OUT_MEMBER 1083
 #define FREE_GROUP 109
 #define LOOK_GROUP_MEMBER 110
 #define LOOK_GROUP 111
 
+#define SET_QUN 112
+#define SEND_FILE 113
 #define EXIT_ACCOUNT 114  
 #define LOOK_MESSAGEBOX 115
 #define MANAGE_FRIEND 116
 #define MANAGE_MESSAGE 117
 #define MANAGE_GROUP 118
+#define MANAGE_FILE 120
+#define RECV_FILE 119
 
 
 void client_UI(void);
@@ -71,20 +77,54 @@ int ret ;
 
 pthread_mutex_t mutex;
 pthread_cond_t cond;
+pthread_t th1,th2;
 
-int main()
+int main(int argc,char ** argv)
 {
     pthread_mutex_init(&mutex,NULL);
     pthread_cond_init(&cond,NULL);
     pthread_t th1,th2;
     int conn_fd;
-    int serv_port = PORT;
+    int serv_port;
     struct sockaddr_in serv_addr;
     char recv_buf[MAX_SIZE];
     memset(&serv_addr,0,sizeof(struct sockaddr_in));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(serv_port);
-    inet_aton("127.0.0.1",&serv_addr.sin_addr);
+    int i;
+    for(i = 1;i < argc;i++)
+    {
+        if(strcmp("-p",argv[i]) == 0)
+        {
+            serv_port = atoi(argv[i+1]);
+            if(serv_port < 0 || serv_port > 65535)
+            {
+                printf("invalid serv_addr.sin_port\n");
+                exit(1);
+            }
+            else 
+                serv_addr.sin_port = htons(serv_port);
+            continue;
+        }
+
+        if(strcmp("-a",argv[i]) == 0)
+        {
+            if(inet_aton(argv[i+1],&serv_addr.sin_addr) == 0)
+            {
+                printf("invalid server ip address\n");
+                exit(1);
+            }
+            continue;
+        }
+    }
+
+    if(serv_addr.sin_port == 0 || serv_addr.sin_addr.s_addr == 0)
+    {
+        printf("Usage : [-p] [serv_addr.sin_port] [-a] [serv_address]\n");
+        exit(1);
+    }
+//    serv_addr.sin_port = htons(serv_port);
+ //  inet_aton("127.0.0.1",&serv_addr.sin_addr);
+    //inet_aton("47.94.14.45",&serv_addr.sin_addr);
     conn_fd = socket(AF_INET,SOCK_STREAM,0);
     connect(conn_fd,(struct sockaddr *)&serv_addr,sizeof(struct sockaddr));
     CONN_FD = conn_fd;
@@ -122,7 +162,9 @@ int main()
                        }
                        else 
                        {
+                        
                            recv(conn_fd,&ret_LO,sizeof(ret_LO),0);
+                           
                            if(ret_LO == 1)
                            {
                                ACCOUNT = pack.data.send_account;
@@ -133,6 +175,11 @@ int main()
                                printf("接收到%d条消息,注意查收！\n",i);
                                sleep(1);
                                goto abc;
+                           }
+                           else if(ret_LO == -1)
+                           {
+                               printf("账户不存在...\n");
+                               break;
                            }
                            else 
                            {
@@ -236,8 +283,10 @@ int main()
                         my_err("find password send error",__LINE__);
                         continue;
                     }
-
+                   
                     ret_FP = recv(conn_fd,&pack,sizeof(pack), 0);
+                     printf("正在处理...\n");
+                    sleep(1);
                     if(ret_FP < 0)
                     {
                         my_err("find password error",__LINE__);
@@ -245,57 +294,67 @@ int main()
                     }
                     
                     char daan[1024] = "\0";
-                    fprintf(stderr,"密保问题：%s",pack.data.write_buf);
-                    fprintf(stderr,"\n请输入密保答案：");
-                    fgets(daan,sizeof(daan),stdin);
-                    daan[strlen(daan) - 1] ='\0';
-                    
-            
-                    if(strcmp(pack.data.read_buf,daan) == 0)
+                    if(pack.data.send_fd == 123456)
                     {
-                        ACCOUNT = pack.data.send_account;
-                        printf("账户：%d的密码是：%s\n",pack.data.send_account,pack.data.send_user);
-                        char c;
-                        printf("是否修改密码(y/n)\n");
-                        scanf("%c",&c);
-                        getch();
-                        if(c == 'y')
+                        fprintf(stderr,"密保问题：%s",pack.data.write_buf);
+                        fprintf(stderr,"\n请输入密保答案：");
+                        fgets(daan,sizeof(daan),stdin);
+                        daan[strlen(daan) - 1] ='\0';
+                        
+                
+                        if(strcmp(pack.data.read_buf,daan) == 0)
                         {
-                            memset(&pack,0,sizeof(pack));
-                            
-                            printf("请输入修改后的密码：");
-                            GetPassword(pack.data.send_user);
-                            pack.data.send_account = ACCOUNT;
-                            pack.type = CHANGE_PASSWORD;
-                            int ret_CP = -1;
-                            if((ret_CP = send(conn_fd,&pack,sizeof(pack),0)) < 0)
+                            ACCOUNT = pack.data.send_account;
+                            printf("账户：%d的密码是：%s\n",pack.data.send_account,pack.data.send_user);
+                            char c;
+                            printf("是否修改密码(y/n)\n");
+                            scanf("%c",&c);
+                            getch();
+                            if(c == 'y' || c == 'Y')
                             {
-                                my_err("send error",__LINE__);
-                                continue;
-                            }
-                            else 
-                            {
-                                ret_CP = -1;
-                                recv(conn_fd,&ret_CP,sizeof(ret_CP),0);
-                                if(ret_CP == -1)
+                                memset(&pack,0,sizeof(pack));
+                                
+                                printf("请输入修改后的密码：");
+                                GetPassword(pack.data.send_user);
+                                pack.data.send_account = ACCOUNT;
+                                pack.type = CHANGE_PASSWORD;
+                                int ret_CP = -1;
+                                if((ret_CP = send(conn_fd,&pack,sizeof(pack),0)) < 0)
                                 {
-                                    printf("修改密码失败！\n");
+                                    my_err("send error",__LINE__);
                                     continue;
                                 }
                                 else 
                                 {
-                                    printf("密码修改成功，请重新登录！\n");
-                                    continue;
+                                    ret_CP = -1;
+                                    recv(conn_fd,&ret_CP,sizeof(ret_CP),0);
+                                    if(ret_CP == -1)
+                                    {
+                                        printf("修改密码失败！\n");
+                                        continue;
+                                    }
+                                    else 
+                                    {
+                                        printf("密码修改成功，请重新登录！\n");
+                                        continue;
+                                    }
+                                    break;
                                 }
-                                break;
                             }
-                        }
-                        else 
-                        {
-                            printf("输入密保答案错误！\n");                           
-                            continue;
+                            else 
+                            {
+                                printf("完成！\n");                           
+                                continue;
+                            }
+
                         }
                     }
+                    else 
+                    
+                        printf("无权操作！该账户不存在\n");
+                        
+                    
+
                     break;
                 case EXIT_CUI:
                     send(conn_fd,&pack,sizeof(pack),0);
@@ -350,7 +409,7 @@ abc :
                     
                     fprintf(stderr,"正在退出，请稍候...\n");
                     sleep(1);
-                    
+                    close(conn_fd);
                     if(ret == 1)
                     {
                         close(conn_fd);
@@ -388,7 +447,11 @@ abc :
                         printf("未添加对方为好友！\n");
                         ret = 0;
                     }
-                    ret = 0;
+                    else if (ret == 0)
+                    {
+                        printf("您已将该好友列为黑名单，无法发送消息...\n");
+                    }
+                    
                     
                     break;
                 case GROUP_CHAT:
@@ -426,7 +489,7 @@ abc :
                     printf("正在处理，请稍候...\n");
                     sleep(1);
                     
-                    if(ret == -1)
+                    if(ret == 2)
                         fprintf(stderr,"该账户不存在，请重新输入...\n");
                     else if(ret == 1) 
                         fprintf(stderr,"发送请求成功...\n");
@@ -449,20 +512,22 @@ abc :
                         printf("正在处理，请稍后...\n");
                         sleep(1);
                         
-                        if(ret == 1)
+                        if(ret == 0)
                             fprintf(stderr,"删除成功...\n");
-                        else if(ret == 0)
-                            printf("输入的账户不存在,请再次确认...\n");
                         else if(ret == -1)
+                            printf("输入的账户不存在,请再次确认...\n");
+                        else if(ret == 1)
                             printf("在好友列表中未找到该用户...\n");
-                        else if(ret == -2)
+                        else 
                             printf("删除失败...\n");
                         ret = 0;
                     break;
                     case LOOK_FRIEND:
 
+                        
                         pack.data.send_account = ACCOUNT;
                         send(conn_fd,&pack,sizeof(pack),0);
+                        sleep(1);
                         Look_Friends(&box);
                         memset(&box,0,sizeof(box));
                     break;
@@ -470,8 +535,9 @@ abc :
                         pack.data.send_account = ACCOUNT;
                         send(conn_fd,&pack,sizeof(pack),0);
                         printf("正在处理...\n");
-                        sleep(3);
+                        sleep(1);
                         Look_Chat_Record(&box);
+                        memset(&box,0,sizeof(box));
                         ret = 0;
                     break;
                     case SET_REALTION:
@@ -537,7 +603,8 @@ abc :
                         pack.data.recv_account = ACCOUNT;
                         send(conn_fd,&pack,sizeof(pack),0);
                         printf("正在处理...\n");
-                        sleep(3);
+                        //sleep(3);
+                        sleep(1);
                         if(ret == -1)
                         {
                             printf("无权查看该群成员...\n");
@@ -545,6 +612,32 @@ abc :
                         }
                         Look_Group_Member();
                         memset(&box,0,sizeof(box));
+                        break;
+                    case OUT_MEMBER:
+                        fprintf(stderr,"请输入要管理的群：");
+                        scanf("%d",&pack.data.recv_account);
+                        fprintf(stderr,"请输入要踢出的好友账户：");
+                        scanf("%d",&pack.data.send_fd);
+                        pack.data.send_account = ACCOUNT;
+                        send(conn_fd,&pack,sizeof(pack),0);
+                        printf("正在处理...\n");
+                        sleep(1);
+                        if(ret == 0)
+                        {
+                            printf("踢出%d成功...\n",pack.data.send_fd);
+                        }
+                        else if(ret == -1)
+                        {
+                            printf("不是群主或管理员，无权管理群...\n");
+                        }
+                        else if(ret == -2)
+                        {
+                            printf("账户未加入该群...\n");
+                        }
+                        else if(ret == -3)
+                        {
+                            printf("无权踢出群主或管理员...\n");
+                        }
                         break;
                     case LOOK_GROUP:
                         pack.data.send_account = ACCOUNT;
@@ -582,9 +675,10 @@ abc :
                         {
                             printf("您是群主，不能退出只能解散群...\n");
                         }
-                        else 
+                        else if(ret == 1)
                             printf("已退出该群...\n");
-
+                        else 
+                            printf("为加入该群...\n");
                         break;
 
                         
@@ -593,10 +687,113 @@ abc :
                         pack.data.send_account = ACCOUNT;
                         send(conn_fd,&pack,sizeof(pack),0);
                         printf("正在处理...\n");
-                        sleep(3);
+                        sleep(1);
                         Look_MessageBox(&box);
                         ret = 0;
                         break;
+
+                    case SET_QUN:
+                        fprintf(stderr,"请输入要设置的群号：");
+                        scanf("%d",&pack.data.send_account);
+                        pack.data.recv_account = ACCOUNT;
+                        getch();
+                        fprintf(stderr,"请输入要设置的成员账户：");
+                        scanf("%d",&pack.data.send_fd);
+                        getch();
+                        fprintf(stderr,"输入：2.管理员...3.群成员");
+                        scanf("%d",&pack.data.recv_fd);
+                        getch();
+                        send(conn_fd,&pack,sizeof(pack),0);
+
+                        sleep(1);
+                        if(ret == -1 )
+                        {
+                            printf("输入的群号不存在...\n");
+                        }
+                        else if(ret == -2)
+                        {
+                            printf("不是群主，无权设置...\n");
+                        }
+                        else if(ret == 1)
+                        {
+                            printf("设置成功...\n");
+
+                        }
+                        ret = 0;
+                        break;
+                    case SEND_FILE:
+                        fprintf(stderr,"请输入你要发送的文件:");
+                        fgets(pack.data.send_user,sizeof(pack.data.send_user),stdin);
+                        pack.data.send_user[strlen(pack.data.send_user) - 1] = '\0';
+                        pack.data.recv_account = ACCOUNT;
+                        //printf("%s\n",pack.data.send_user);
+                        fprintf(stderr,"请输入好友账户：");
+                        scanf("%d",&pack.data.send_account);
+                        getch();
+                        send(conn_fd,&pack,sizeof(pack),0);
+                        char buffer[1024] = "\0";
+                       // FILE *fp = fopen(pack.data.send_user,"r");
+                        int fp = open(pack.data.send_user,O_RDONLY);
+                        if(fp < 0)
+                        {
+                            perror("open failed");
+                            break;
+                        }
+                        /*
+                        if(fp == NULL)
+                        {
+                            printf("file not found\n");
+                            break;
+                        }
+                        */ 
+                        else 
+                        {
+                            int i = 0;
+                            memset(buffer,0,sizeof(buffer));
+                            int file_block_length = 0;
+                            //while(( file_block_length = fread(buffer,sizeof(char),1024,fp)) > 0)
+                            while((file_block_length = read(fp,buffer,sizeof(buffer))) > 0)
+                            {
+                            
+                                i++;
+                                
+                              //  printf("file_block_length = %d\n",file_block_length);
+                              //  printf("client : %d\n",i);
+                                if(send(conn_fd,buffer,file_block_length,0) <= 0)
+                                {
+                                    printf("Send file failed\n");
+                                    break;
+                                }
+                                memset(buffer,0,sizeof(buffer));
+
+                            }
+                            close(fp);
+                            memset(buffer,0,sizeof(buffer));
+                            
+                            sleep(1);
+                            strcpy(buffer,"exit25908");
+                            send(conn_fd,buffer,strlen(buffer),0);
+                            
+                            
+
+                        }
+                        sleep(1);
+                        if(ret == 1)
+                        {
+                            printf("File : %s\n发送成功，等待好友接收...\n",pack.data.send_user);
+                        }
+                        else if(ret == -1)
+                        {
+                            printf("未添加好友，请重新添加...\n");
+                        }
+                        else 
+                        {
+                            printf("发送失败，请重新发送...\n");
+                        }
+                        
+                        break;
+                    
+
                 default:
                     break;
             }
@@ -616,30 +813,31 @@ void Account_UI(void)
 	printf("\t\t\t\t\t\t|                                                     |\n");
     printf("\t\t\t\t\t\t|                    \033[1m\033[37m请输入正确选项\033[0m                   |\n");
 	printf("\t\t\t\t\t\t|                                                     |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[36m101.私聊\033[0m                          |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[36m102.群聊\033[0m                          |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[36m101.私聊\033[0m                         |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[36m102.群聊\033[0m                         |\n");
 	printf("\t\t\t\t\t\t|                                                     |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[32m103.添加好友\033[0m                      |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[32m104.删除好友\033[0m                      |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[32m105.查询好友列表\033[0m                  |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[32m106.查询聊天记录\033[0m                  |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[32m107.设置好友状态\033[0m                  |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[32m103.添加好友\033[0m                     |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[32m104.删除好友\033[0m                     |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[32m105.查询好友列表\033[0m                 |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[32m106.查询聊天记录\033[0m                 |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[32m107.设置好友状态\033[0m                 |\n");
 	printf("\t\t\t\t\t\t|                                                     |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[33m108.创建群聊\033[0m                      |\n");
-    printf("\t\t\t\t\t\t|                    \033[1m\033[33m1081.加入群聊\033[0m                     |\n");
-    printf("\t\t\t\t\t\t|                    \033[1m\033[33m1082.退出群聊\033[0m                     |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[33m109.解散群聊\033[0m                      |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[33m108.创建群聊\033[0m                     |\n");
+    printf("\t\t\t\t\t\t|                    \033[1m\033[33m1081.加入群聊\033[0m                    |\n");
+    printf("\t\t\t\t\t\t|                    \033[1m\033[33m1082.退出群聊\033[0m                    |\n");
+    printf("\t\t\t\t\t\t|                    \033[1m\033[33m1083.踢出群成员\033[0m                  |\n");
+	printf("\t\t\t\t\t\t|                    \033[1m\033[33m109.解散群聊\033[0m                     |\n");
 	printf("\t\t\t\t\t\t|                    \033[1m\033[33m110.查看群成员\033[0m                   |\n");
 	printf("\t\t\t\t\t\t|                    \033[1m\033[33m111.查看已加群\033[0m                   |\n");
-	printf("\t\t\t\t\t\t|                    \033[1m\033[33m112.查看聊天记录\033[0m                 |\n");
 	printf("\t\t\t\t\t\t|                                                     |\n");
+    printf("\t\t\t\t\t\t|                    \033[1m\033[35m112.设置群管理员\033[0m                 |\n");
 	printf("\t\t\t\t\t\t|                    \033[1m\033[35m113.给好友发送文件\033[0m               |\n");
 	printf("\t\t\t\t\t\t|                    \033[1m\033[35m114.退出聊天室\033[0m                   |\n");
 	printf("\t\t\t\t\t\t|                                                     |\n");
 	printf("\t\t\t\t\t\t+-------------------------+                           |\n");
-	printf("\t\t\t\t\t\t|     \033[1m\033[31m115.查看消息盒子\033[0m    |                          |\n");
+	printf("\t\t\t\t\t\t|     \033[1m\033[31m115.查看消息盒子\033[0m    |                           |\n");
 	printf("\t\t\t\t\t\t+=========================+===========================+\n");
-	printf("请输入正确选项：");
+	printf("[%d]请输入正确选项：",ACCOUNT );
 }
 void client_UI(void)
 {
@@ -712,18 +910,13 @@ void *send_fun(void *arg)
     pack.data.send_account = ACCOUNT;
     fprintf(stderr,"请输入接受消息的账户：");
     scanf("%d",&pack.data.recv_account);
+    getch();
+    char c;
     
-    char c='\0';
     do
     {
         ret = 0;
-        getch();
-        fprintf(stderr,"请输入将要发送的消息类型：(1.一般消息\t2.文件)\n");
-        int choose = 0;
-        scanf("%d",&choose);
-        getch();
-        if(choose == 1)
-        {
+       
             pack.data.send_fd = 1;
 
             pack.type = SIGNAL_SEND;
@@ -739,64 +932,132 @@ void *send_fun(void *arg)
             }
         
             
-        }
+        
 
-        else if(choose == 2)
-        {
-            pack.data.send_fd = 2;
-            /*
-                发送文件
-
-            */
-        }
+        
     printf("正在处理...\n");
     sleep(1);
-    
-    if(ret == -1)
+    if(ret == 0)
     {
-        printf("未添加对方为好友！\n");
+        printf("已将该好友加入黑名单...\n");
+    }
+    else if(ret == 1)
+    {
+        printf("发送完成...\n");
+    }
+
+    else if(ret == -1)
+    {
+        printf("未添加对方为好友！请先添加好友...\n");
     }
         printf("是否继续发送(y/n)\n");
         scanf("%c",&c);
         
     } while (c == 'y' || c== 'Y');
-    ret = 1;
+    ret = 0;
 }
 
 
 void * recv_fun(void * arg)
 {
     PACK pack;
-    
+   
     int cfd = *((int *)arg);
 
     while(1)
     {
+        /*
+        pthread_mutex_lock(&mutex);
+        pthread_cond_wait(&cond,&mutex);
+
+        pthread_exit(NULL);
+        pthread_mutex_unlock(&mutex);
+        */
         int n = 0;
         if((n = recv(cfd,&pack,sizeof(pack),0)) > 0)
         {
+            
+           printf("recv recv recv\n");
+           //接收有返回值的函数
             if(pack.data.recv_fd == 55)
-            {   
+            {
+                printf("recv 55\n");   
                 ret = pack.data.ret_AAA;
                 
                     continue;
             }
+            //接受box要的包
             else if(pack.data.recv_fd == 66)
             {
-                sleep(1);
-                recv(cfd,&box,sizeof(box),0);
+                printf("recv 66\n");
+                if((n = recv(cfd,&box,sizeof(box),MSG_WAITALL)) < 0)
+                {
+                    printf("%d : recv error\n",__LINE__);
+                    
+                }
+                printf("%d %d : %s \n",__LINE__,box.talk_number,box.messages[box.talk_number]);
                 continue;
+            }
+            //接受文件
+            else if(pack.data.recv_fd == 77)
+            {
+                char buffer[1024] = "\0";
+                char File_Name[50] = "\0";
+                                
+                sprintf(File_Name,"2%s",pack.data.recv_user);
+                printf("file name = %s\n",File_Name);
+                int fp = open(File_Name,O_CREAT  | O_TRUNC ,0666);
+                if(fp < 0)
+                {
+                    perror("open failed954");
+                }
+                close(fp);
+                fp = open(File_Name,O_APPEND | O_WRONLY);
+                if(fp < 0)
+                    perror("open file name  failed  ");
+                memset(buffer,0,sizeof(buffer));
+                int length = 0;
+                int write_length;
+                int i = 0;
+                while( (length = recv(CONN_FD,buffer,sizeof(buffer),0) ) > 0 )
+                {
+                        
+                    
+                    
+                    
+                    
+                    if(strcmp(buffer,"exit25908") == 0)
+                        break;
+                    
+                    if(length <0)
+                    {
+                        printf("Recieve Data From client Failed\n");
+                        break;
+                    }
+                    
+                     write_length = write(fp,buffer,length);
+                    /*                
+                   if(write_length != length)
+                    {
+                        printf("write failed\n");
+                        return 0;
+                    }*/
+                    memset(buffer,0,sizeof(buffer));
+                    
+                }
+                close(fp);
+                            
             }
             
             
-             if(pack.data.send_fd == 1)
-
-                fprintf(stderr,"叮！您有一条新消息，请注意查收\n");
+           
 //1 一般消息        2.wenjian    3.haoyouqingqiu
-            else if(pack.data.send_fd == 1 && pack.data.recv_fd == 2) 
+            if(pack.data.send_fd == 1 && pack.data.recv_fd == 2) 
                 fprintf(stderr,"\033[1m\033[31m叮！您的特别关心给你发送消息，快快查看\033[0m\n");
             else if(pack.data.send_fd == 2 && pack.data.recv_fd == 2)
                 fprintf(stderr,"\033[1m\033[31m叮！您的特别关心给您发来一个文件，快快查看\033[0m\n");
+            else if(pack.data.send_fd == 1)
+                fprintf(stderr,"叮！您有一条新消息，请注意查收\n");
             else if(pack.data.send_fd == 3)
                 fprintf(stderr,"您收到一条好友请求，请及时查看\n");
             else if(pack.data.send_fd == 2)
@@ -860,13 +1121,71 @@ int Look_MessageBox(BOX *box)
             printf("message:\n%s\n",box->messages[i]);
             printf("end\n");
             printf("*******************************************************************************************\n\n\n");
+            PACK pack1;
+            pack1.type = MANAGE_MESSAGE;
+            pack1.data.recv_account = ACCOUNT;
+            pack1.data.send_account = box->message_account[i];
+            strcpy(pack1.data.write_buf,box->messages[i]);
+            send(CONN_FD,&pack1,sizeof(pack1),0);
+        }
+        
+    }
+    else if(choose1 == 2)
+    {
+        for(int i = 1;i <= box->talk_number;i++)
+        {
+            printf("正在处理....\n");
+            sleep(1);
+            memset(string,0,sizeof(string));
+            Cut_Time(box->message_date[i],string);
+            printf("%d%70s\n",box->message_account[i],box->message_date[i]);
+            printf("*******************************************************************************************\n");
+            printf("file:\n%s\n",box->messages[i]);
+            fprintf(stderr,"是否接收该文件(y/n)");
+            char c;
+            scanf("%c",&c);
+            getch();
+            PACK pack1;
+            if(c == 'y' || c == 'Y')
+            {
+                
+                pack1.type = RECV_FILE;
+                pack1.data.recv_account = ACCOUNT;
+                pack1.data.send_account = box->message_account[i];
+                strcpy(pack1.data.recv_user,box->messages[i]);
+                send(CONN_FD,&pack1,sizeof(pack1),0);
+            }
+                pack1.type = MANAGE_FILE;
+                pack1.data.recv_account = ACCOUNT;
+                pack1.data.send_account = box->message_account[i];
+                strcpy(pack1.data.send_user , box->messages[i]);
+                send(CONN_FD,&pack1,sizeof(pack1),0);
+                sleep(1);
+                if(ret == -1)
+                {
+                    printf("接收文件失败...\n");
+                }
+                if(ret == 1)
+                {
+                    printf("接收文件成功！\n");
+                }
+                continue;
+            
+            /*
+            else 
+            {
+                PACK pack1;
+                pack1.type = MANAGE_FILE;
+                pack1.data.send_account = box->message_account[i];
+                strcpy(pack1.data.send_user , box->messages[i]);
+                send(CONN_FD,&pack1,sizeof(pack1),0);
+            }
+            */
+
 
         }
-        PACK pack1;
-        pack1.type = MANAGE_MESSAGE;
-        pack1.data.recv_account = ACCOUNT;
-     
-        send(CONN_FD,&pack1,sizeof(pack1),0);
+       
+        
     }
     else if(choose1 == 3)
     {
@@ -882,6 +1201,7 @@ int Look_MessageBox(BOX *box)
             printf("%s\n",box->read_buf[i]);
             fprintf(stderr,"是否同意好友请求(y/n)");
             scanf("%c",&c);
+            getch();
             if(c == 'Y' || c == 'y')
                 pack.data.recv_fd = 1;
             
@@ -911,35 +1231,44 @@ int Look_MessageBox(BOX *box)
             PACK pack;
             memset(string,0,sizeof(string));
             Cut_Time(box->message_date[i],string);
-            printf("%d%70s\n",box->plz_group[i],box->plz_date[i]);
+            printf("%d%70s\n",box->plz_group[i],box->group_date[i]);
             
             printf("------------------------------------------------------------------------------------\n");
-            printf("%s\n",box->write_buf[i]);
+            printf("申请加入群聊 ：%s\n",box->write_buf[i]);
             fprintf(stderr,"是否同意群聊请求(y/n)");
             scanf("%c",&c);
+            getch();
             if(c == 'Y' || c == 'y')
                pack.data.recv_fd = 1;
             
-            pack.data.send_account = box->plz_group[i];
+            pack.data.send_account = box->plz_group[i];  
             pack.type = MANAGE_GROUP;
             pack.data.recv_account = ACCOUNT;
-            
-            send(CONN_FD,&pack,sizeof(pack),0);
-            
+            strcpy(pack.data.write_buf,box->write_buf[i]);
+            strcpy(pack.data.recv_user,box->group_date[i]);
+            if(c == 'Y' || c== 'y')
+            {
+                send(CONN_FD,&pack,sizeof(pack),0);
+            }
             sleep(1);
             if(ret == 1)
             {
                 printf("添加用户进群成功...\n");
             }
-            else 
+            else if(ret == -1)
             {
-                printf("添加失败...\n");
+                printf("该用户已加入群，无需重复添加...\n");
+            }
+            else if(ret == 0)
+            {
+                printf("已拒绝加入群聊...\n");
             }
             
         
         }
     }
   
+    memset(&box,0,sizeof(box));
 
 }
 
@@ -993,24 +1322,27 @@ void Cut_Time(char *time,char *string)
 
 int Look_Friends(BOX *box)
 {
-    printf("好友编号   好友账户   好友状态\n");
+    printf("%20d(%s)\n",box->plz_group[0],box->group_date[0]);
+    printf("好友总数：%d\n",box->number);
+    printf("----------------------------------------------\n");
+    printf("好友编号   好友账户         好友昵称      好友状态\n");
     for(int i = 1;i < box->number + 1;i++)
     {
-        if(box->plz_account[i] == 2)
+        if(box->group_account[i] == 2)
         {
-            printf("\033[1m\033[31m%4d%12d\033[0m\t",i,box->message_account[i]);
+            printf("\033[1m\033[31m%4d%12d%20s\033[0m\t",i,box->plz_group[i],box->group_date[i]);
         }
         else 
         {
-            printf("%4d%12d\t",i,box->message_account[i]);
+            printf("%4d%12d%20s\t",i,box->plz_group[i],box->group_date[i]);
         }
-        if(box->type[i] == 1)
+        if(box->message_account[i] == 1)
         {
-            printf("\033[1m\033[31m在线\033[0m\n");
+            printf("   \033[1m\033[31m在线\033[0m\n");
         }
         else 
         {
-            printf("离线\n");
+            printf("   离线\n");
         }
     }
 
@@ -1051,9 +1383,23 @@ int Look_Chat_Record(BOX *box)
         {
             PACK pack;
             memset(string,0,sizeof(string));
-            printf("%d%70s\n",box->plz_account[i],box->plz_date[i]);
+            Cut_Time(box->plz_date[i],string);
+            printf("%d%60s\n",box->plz_account[i],box->plz_date[i]);
             printf("---------------------------------好友申请-------------------------------------\n");
             
+        }
+    }
+    else if(choose1 == 2)
+    {
+        for(int i = 1;i <= box->file_number;i++)
+        {
+            PACK pack;
+            memset(string,0,sizeof(string));
+            
+            Cut_Time(box->file_date[i],string);
+            printf("%d%60s\n",box->file_account[i],box->file_date[i]);
+            printf("-------------------------------文件--------------------------------------------\n");
+            printf("file : %s\n",box->file[i]);
         }
     }
 
@@ -1061,7 +1407,7 @@ int Look_Chat_Record(BOX *box)
 
 int Look_Group_Member(void)
 {
-    printf("%s(%d)\n",box.message_date[0],box.message_account[0]);
+    printf("\033[1m\033[40;34m%s(%d)\033[0m\n",box.message_date[0],box.message_account[0]);
     printf("---------------------------------------------\n");
     printf("账户                昵称                 群地位\n");
     for(int i = 1;i <=box.number ;i++)
@@ -1099,3 +1445,5 @@ int Look_Group(void)
     }
     return 1;
 }
+
+
