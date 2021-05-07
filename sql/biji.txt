@@ -1,0 +1,53 @@
+
+DQL :
+	数据查询语言（凡是带有select关键字的都是查询语句）
+	select ...
+ 
+DML :
+	数据操作语言（凡是对表当中的数据进行增删改的都是DML）
+	insert 增
+	delete 删
+	update 改
+DDL : 	
+	数据定义语言
+	凡是带有create、drop、alter的都是DDL
+	DDL主要操作的是表的结构，不是表中的数据
+	create ： 新建 ，增
+	drop ： 删除
+	alter ： 修改
+	这个增删改和DML不同，这个主要是对表结构进行操作
+TCL ： 
+	事务控制语言
+	包括
+		事务提交 ： commit
+		事务回滚 ： rollback
+DCL ：
+	数据控制语言
+	例如 ： 授权 grant ， 撤销权限 revoke ....
+
+
+标准sql语句中要求字符串使用单引号括起来，虽然mysql支持双引号，但是不通用
+
+
+简单查询 ： 
+
+
+导入表 ：
+	 source 路径 
+不看表中的数据，只看表的结构 ： 
+	desc 表名 
+查看mysql 版本
+	select  version();
+查看当前操作的数据库
+	select database();
+查看字段内容
+	select * from dept;
+	select dname from dept;
+	select dname , deptno from dept;
+使用别名 查看表
+	select DNAME as dname , DEPTNO as deptno from DEPT;
+	select DNAME  dname , DEPTNO  'dept no' from DEPT;
+查询员工年薪? (字段可以参与数学运算)
+	select ENAME , SAL * 12 from EMP;
+
+ 
