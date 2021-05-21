@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字体属性</title>
+    <style>
+        div {
+        font-family : "微软雅黑";
+    }
+        p{
+            font-family:  "宋体";
+           
+        }
+    </style>
+</head>
+<body>
+    <div >微软雅黑   </div>    
+    <p>
+        微软雅黑    
+    </p>
+</body>
+</html>
+
+
+字体样式
+    css使用font-family属性定义文本的字体系列
+        p{font-family : "微软雅黑";}
+        一般情况下，如果有空格隔开的多个单词组成的字体 
+        尽量使用系统默认自带字体 ， 保证在任何用户的浏览器中都能正确显示
+
+字体大小 
+        font-size : 20px;
+        px 大小使我们网页中最常用的单位   默认 16px
+
+
+字体粗细
+        font-weight : normal / bold / bolder / lighter / 数字（100 / 200 / 300 / 400 .....900）
+
+文字样式 ： 
+    font-style : normal  / italic ; 
+    normal 正常形式         italic ： 斜体
+
+<!-- 字体复合属性
+<style>
+    <div>
+        font-style : italic;
+        font-weight : 700 ; 
+        font-size : 16px;
+        font-family : 'Microsoft yahei';
+
+        复合属性 ： 简写的方式 ， 节约代码   ， 注意顺序不能颠倒
+        font : font-style  font-weight font-size / line-height font-family ;
+        font : italic 700 16px 'Microsoft yahei'; 
+        font-size  和font-family 不能省略
+    <div>
+
+</style> -->
+
+
+
+文本属性
+    css Text 属性可定义文本的外观 ， 比如文本的颜色 ， 对其文本 ， 装饰 文本， 文本缩进 ， 
+
+    颜色
+        color : #ff0000;
+    对齐文本
+        text-align : center / left / right ;
+    装饰文本
+        text-decoration : 给文本添加下划线 ， 删除线 ， 上划线 
+        text-decoration : none / underline / overline / line-througth 
+    文本缩进
+        text-indent : 用来指定文本的第一行的缩进， 通常是段落的首行缩进
+        p {
+            文本的首行缩进多少距离
+            text-indent : 20px;
+            text-indent : 2em ;
+            em是一个相对单位 ， 就是当前元素的1个文字的大小
+        }    
+
+    行间距 
+        line-height属性用于设置行间的距离 26px
+
+
+
+
+css引入方式
+        内部样式表
+            内部样式表是写到html页面内部 ， 是将所有的css代码抽取出来 ， 单独放到一个 style标签中
+            style 标签理论上可以放在html文档的任何地方， 但是一般会放在文档的head标签中
+
+        行内样式表
+            只修改一点点内容
+            <p style = "color : pink ; font-size : 12px ;  "> 青春不常在 ， 赶紧谈恋爱</p>
+            style其实就是标签的属性
+            在双引号中间 ， 写法要符合css规范
+            可以控制当前的标签设置样式
+        外部样式表
+            实际开发都是外部样式表 ， 样式单独写到css文件中 ， 把vss文件引入html页面中使用
+
+            1.新建后缀名.css的外部文件，把所有css代码写到此文件
+            2.在html页面，使用link标签引入文件
+        <link rel="stylesheet" href="css文件路径">  写在头部 ， 
+
+
+样式表              优点                    缺点            使用情况        控制范围
+行内样式表          书写方便，权重高          结构样式婚鞋      较少            控制一个标签
+内部样式表          部分结构和样式相分离       没有彻底分离     较多              控制一个页面
+外部样式表          完全实现结构和样式分离     需要引入         最多            控制多个页面
+
+
+
+css三大特性
+
+        层叠性 ， 继承性 ， 优先级 
+        层叠性
+            相同选择器给设置相同的样式  ， 此时一个样式就会覆盖另一个冲突的样式 ， 层叠性主要解决样式冲突的问题
+            原则 
+            样式冲突遵循的原则就是就近原则  ， 哪个样式离结构近 ， 就执行哪个样式
+            样式不冲突 ， 不会重叠 
+        继承性 
+            css中的继承  : 子标签 会继承父标签 的某些特性 如文本颜色 ， 字号
+
+        优先级 
+            选择器                      选择器权重
+            继承 或者 *                     0
+            元素选择器                      1
+            类选择器，伪类选择器              10
+            id选择器                        100
+            行内样式style = ""              1000
+            !important  重要的              无穷大

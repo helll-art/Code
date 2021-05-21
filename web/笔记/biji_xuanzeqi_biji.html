@@ -1,0 +1,212 @@
+类选择器
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 类选择器 */
+        .background {
+            width: 600px;
+            height: 100px;
+        }
+
+        .blue {
+
+            background-color: blue;
+        }
+
+        /* 只能使用一次  */
+        .red {
+
+            background-color: red;
+        }
+
+
+
+        /* id选择器 */
+        #pink {
+            color: pink;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="background red"></div>
+    <div class="background blue"></div>
+    <div class="background red"></div>
+    <div id="pink"> 迈克尔杰克逊 </div>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+id选择器
+id选择器可以为标有特定id的HTML元素指定特定的样式
+HTML元素以id属性来设置id选择器 ， css中 id选择器 以 # 来定义
+
+id选择器的口诀 ： 样式 # 定义 ， 结构 id 调用 ， 只能调用一次 ， 别人切勿使用
+
+
+*通配符选择器
+* {
+属性1 ： 属性值 1 ;
+}
+它表示选取界面中所有的元素 (标签 ,div ,span , )
+
+
+
+基础选择器 作用 特点 使用情况 用法
+标签选择器 可以选出所有相同的标签 ， 比如 P 不能差异化选择 较多 p { color :red ; }
+类选择器 可以选出1个或者多个标签 可以根据需求选择 非常多 .nav{color : red ;}
+id选择器 一次只能选择一个标签 id属性只能在每个HTML中出现一次 一般搭配js使用 #nav {color : red;}
+通配符选择器 选择所有的标签 选择的太多 ， 部分不需要 特殊情况使用 *{color : red ; }
+
+
+
+复合选择器
+    在css中 ， 可以根据选择器的类型把选择器分为基础选择器 和复合选择器 ， 复合选择器是建立在基础选择器智商 ， 对基本选择器进行组合使用
+        复合选择器可以更精确 ， 更高效的选择目标元素(标签)
+        复合选择器是由两个或者多个基础选择器 ， 通过不同的方式组合而成的
+        常用的复合选择器包括 ： 后代选择器 ， 子选择器 ， 并集选择器 ， 伪类选择器等等
+        
+    后代选择器
+        后代选择器又称包含选择器 ， 可以选择父元素里面的子元素 ， 其写法就是把外层标签写在里面，内层标签写在后面，中间用空格分割
+        当标签发生嵌套是 ， 内层标签就成为外层标签的后代
+        元素1 元素2 {样式声明}
+        尚属于法表示 选择元素1里面的所有元素2
+        <ol>
+            <li></li>
+        </ol>
+
+        ol li {
+            color : pink;
+        }
+
+        .nav ol li a {
+            color : pink;
+        }
+        <ol class = "nav">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li>
+                <a href = "./01.html" target = "_blank">我是pink 色</a>
+            </li>
+
+        </ol>
+
+    子选择器
+        子元素选择器（子选择器）只能选择作为某元素的最近一级子元素 ， 简单理解就是选亲儿子元素
+        语法
+            元素1 > 元素2 {样式声明}
+        上述语法表示选择元素1里面的所有后代元素2
+
+        div > p {样式声明} 选择div里面所有最近一级p标签元素
+        元素1 和元素2 中间用 大于号隔开
+        元素1 是父级 元素2 是子级 ， 最终选择的是元素2
+
+
+子选择器和后代选择器
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 将大肘子变为红色字体 */
+        .hot > a{
+            color : red;
+        }
+        /* 将百度 全部变为 红色字体 */
+        .nav ul li a{
+            color : red ;
+        }
+    </style>
+</head>
+<body>
+    <div class = "hot">
+        <a href = "#" >大肘子</a>
+        <ul>
+            <li><a href = "#">猪头</a></li>
+            <li><a href = "#">狗头</a></li>
+        </ul>
+    </div>
+    <div class = "nav">
+        <ul>
+            <li><a href = "#" > 百度</a></li>
+            <li><a href = "#" > 百度</a></li>
+        </ul>
+    </div>
+</body>
+</html>
+
+
+
+
+并集选择器
+    并集选择器可以选择多组标签 ， 同时为他们定义为相同的形式 
+    并集选择器 是各选择器 通过逗号连接而成  任何形式的选择器都可以作为并集选择器的一部分
+    语法
+        元素1 ， 元素 2{样式声明}
+    上述语法表示选择元素1 和 元素 2
+    例如 
+        ul , div {样式声明}
+    元素1 和元素 2 中间用逗号隔开
+    逗号可以理解为和的意思
+
+
+伪类选择器
+    链接伪类选择器
+        a : link 选择所有未被访问的连接
+        a : visited 选择所有已被访问的连接
+        a : hover 选择鼠标指针位于其上的连接
+        a : active 选择活动连接 鼠标按下未弹起的连接
+
+        /*         a : link 选择所有未被访问的连接        未访问 的 为黑色
+        a : visited 选择所有已被访问的连接              访问过的为 蓝色
+        a : hover 选择鼠标指针位于其上的连接            放到连接上为绿色
+        a : active 选择活动连接 鼠标按下未弹起的连接 */     点击鼠标不放松为橙色
+            a:link{
+                color : rgb(17, 1, 1);
+            }    
+            a:visited{
+                color : blue;
+            }
+            a:hover {
+                color : green;
+            }
+
+            a:active {
+                color : orange ; 
+            }
+        
+
+    focus选择器
+            :focus 伪类选择器用于选取获取焦点的表单元素
+            焦点就是光标 ， 一般情况<input>类表单元素才能获取 ， 因此这个选择器也主要针对表单元素laishuo
+            input :focus {
+                background-color : yellow;
+            }
+
+
+
+复合选择器总结 
+
+选择器              作用                        特征            使用情况                隔开符号及用法
+后代选择器          用来选择后代元素            可能是子孙后代      较多                    符号是空格 .nav a 
+子代选择器          选择最近一级元素            只选亲儿子          较少                    符号是大于 .nav > p 
+并集选择器          选择某些同样样式的元素       可以用于集体声明       较多                符号是逗号 ，  .nav , div , .header 
+连接伪类选择器      选择不同状态的链接           跟链接相关             较多                重点记住a {} 和 a : hover 实际开发的写法
+:focus选择器        选择获得光标的表单          跟表单相关              较少                input : focus 记住这个写法  

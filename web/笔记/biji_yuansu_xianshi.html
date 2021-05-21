@@ -1,0 +1,99 @@
+css的元素显示模式
+
+常见的块元素
+<h1></h1><h2></h2><h3></h3>
+<p></p>
+<div></div>
+<ul></ul>
+<ol></ol>
+<li></li>
+块元素的特点 ；
+    比较霸道 ， 自己独占一行
+    高度 ， 宽度 ， 外边距 以及内边距都可以控制
+    宽度默认是父级宽度的100%
+    是一个容器及盒子 ， 里面可以放 行内或者 块级元素
+
+
+行内元素
+<a href=""></a>
+<strong></strong>
+<b></b>
+<em></em>
+<i></i>
+<del></del>
+<s></s>
+<ins></ins>
+<u></u>
+<span></span>
+行内元素特点 ： 
+    相邻行内元素在一行上 ， 一行可以显示多个
+    高，宽直接设置是无效的
+    默认宽度就是它本身内容的宽度
+    行内元素只能容纳文本或者其他行内元素
+
+行内块元素
+<img src="" alt="">
+<input type="text">
+<td></td>
+行内快元素的特点
+    和相邻行内元素在一行上， 但是他们直接会有空白缝隙 ， 一行可以显示多个
+    默认宽度就是它本身内容的宽度 
+    高度 ， 行高 ， 外边距 以及 内边距 都可以控制
+
+转化为块元素 
+    display : block ;
+转化为行内元素 ： 
+    display : inline;
+转化为行内快元素
+    display : inline-black;
+
+文字居中 
+    line-hight : ...;  = hight;
+
+
+
+背景
+
+
+    背景颜色
+    background-color : transparent | color ;
+                        透明            颜色    
+    
+                    
+    背景图片
+    background-image 
+    background-image : none | url 
+    background-image : url(images.png);
+
+    背景平铺
+    background-repeat : repeat | no-repeat | repeat-x | repeat-y 
+
+    背景位置
+    background-position ： x y ;
+    参数值          说明
+    length          百分数 | 由浮点数字和单位标识符组成的长度值
+    position        top | center | bottom | left | center | right 
+
+    如果参数是精准坐标 ， 第一个一定是x 第二个一定是y
+    如果只指定一个数值 ， 那么该数值一定是x 顶一个默认垂直居中
+
+
+    背景图像固定
+        background-attachment 属性设置背景图像是否固定或者随着页面的其余部分滚动
+        background-attachment 后期可以制作视差滚动的效果
+        background-attachment : scroll | fixed
+            scroll 背景图像岁对象内容滚动
+            fixed  背景图像固定
+
+
+    background : 背景颜色  背景图片地址  背景平铺  背景图像滚动  背景图片位置
+
+    背景色半透明 ： 
+        background : rgba(0,0,0,0.6);
+
+
+        <div>
+            <span>
+                
+            </span>
+        </div>

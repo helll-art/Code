@@ -1,0 +1,72 @@
+
+盒子模型
+    网页布局的过程
+        先准备好相关的网页元素 ， 网页元素基本都是盒子Box
+        利用css设置好盒子样式 ， 然后摆放到相应位置
+        网盒子里面装内容
+
+        网页布局的核心本质 ： 就是利用css摆盒子
+
+        css盒子模型本质就是一个盒子 ， 封装周围的HTML元素 ， 它包括 ： 边框 border，外边距 margin，内边距 padding，实际内容 content
+
+        边框有三部分组成 ; 
+            border : border-width || border-style || border-color 
+                        边框粗细 px      边框样式           边框颜色
+                                        solid 实线边框      
+                                        dashed 虚线边框
+                                        dotted 点线边框
+            边框的复合写法 
+                border : 1px solid pink;
+            边框分开写法
+                border-top : 
+                border-bottom , left , right
+
+            
+            table {
+                width : 400px;
+                height : 249px;
+
+            }
+            th {
+                height : 30px;
+            }
+            table , td , th 
+            {
+                border : 1px solid pink;
+                合并相邻的边框
+                border-collapse : collapse;
+                font-size : 14px;
+                text-align : center;
+            }
+
+
+
+        内边距 ：
+            padding-left : px ;
+            padding-right : px;
+            padding -top / bottom : ...px;
+            复合写法 ： 
+            padding : 5px ;     代表上下左右都有5像素内边距
+            padding : 4px , 10px ;  代表上下有4px内边距 ， 左右有10像素内边距
+            padding ： 5px , 10px  , 15px ; 上 5 左右 10  下 15
+            padding : 1px , 2px , 3px , 4px ; 上1 右 2 下 3 左 4
+
+        内边距 会 影响盒子实际大小
+            如果盒子已经有了高度和宽度 ， 在指定内边框 ， 会撑大盒子
+
+        外边距
+            margin-left / right / top / bottom
+
+            外边距可以让块级盒子水平居中， 但是必须满足两个条件
+                盒子必须指定了宽度
+                盒子左右的外边距都设置为auto
+                margin ： 0 auto ;
+            行内元素或者行内快元素水平居中给其父元素添加text-align : center 即可
+
+            外边距合并 
+                使用margin定义块元素的垂直外边距时 ， 可能会出现外边距的合并
+                嵌套块元素垂直外边距的塌陷
+                    对于两个嵌套关系的块元素 ， 父元素有上外边距同时子元素也有上外边距 ， 此时父元素会塌陷较大的外边距值
+                        可以为父元素定义上边框
+                        可以为父元素定义上内边距
+                        可以为父元素添加 overflow : hidden 

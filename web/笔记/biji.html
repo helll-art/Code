@@ -1,0 +1,189 @@
+<h1>
+    标题标签
+</h1>>
+
+<p>
+    段落标签
+</p>
+</br> 换行标签
+
+<strong> 加粗</strong>
+<em> 倾斜</em>
+<del> 删除线</del>
+<ins> 下划线</ins>
+
+
+图像
+<img src = "../../桌面/文件表.png"  alt = "替换文本 ， 图像显示不出来的时候用文字替换"   title = "鼠标放到图像上， 提示的文字" width = "1900"  border = "1090"/> 
+宽度或者高度一般只设置一个  ， 另一个会根据原图进行自动缩放
+border 给图像设定边框
+
+
+
+
+
+
+
+
+1   .    外部链接 
+<img src = "https://i2.hdslb.com/bfs/face/e11811315acb3eef69c91ae6708d3e4048b86bf9.jpg@96w_96h_1c.jpg"  alt = "替换文本 ， 图像显示不出来的时候用文字替换"   title = "鼠标放到图像上， 提示的文字" width = "1900"/> 
+
+网页照片 右键点复制图片连接
+
+<a href = "跳转目标" target= "目标窗口弹出方式" > 文本或图像 </a>
+
+href   用于指定连接目标的url地址 ， 当为标签应用href属性时 ， 他就具有了超链接的功能
+target 用于指定连接页面的打开方式 ， 其中_self 为默认值 ， _blank 为在新窗口中打开方式
+    _self  当前窗口打开界面
+    _blank 新窗口打开界面
+
+
+
+
+
+2.      内部链接 
+
+<a href = "自己的网页 " target = "_blank" >
+
+</a>
+
+
+3.     下载连接 
+<a href = "下载路径 " target = "_blank" >
+
+</a>
+一般下载路径是一个exe 文件 或者 压缩文件
+
+
+4.     空连接 
+<a href="#" target = "_self " >
+
+</a>
+
+
+
+5.锚点连接 
+    快速定位到网页的某一位置 
+
+        在连接文本的href 属性中 ， 设置属性值为 #名字  的形式 ， 如 <a href = "#two" >  第二季</a>
+        找到目标位置标签 ， 里面添加一个ID属性 = 刚才的名字 ，  <h3 id = "two" >  第二季介绍</h3>
+
+
+
+
+表格属性
+
+表格标签这部分属性我们实际开发不常用 ，
+
+属性名              属性值                  描述
+align        left，center，right        规定表格相对周围元素的对齐方式
+border        1  或 ""                  规定表格单元是否拥有边框 ， 默认为""  表示没有边框
+cellpadding     像素值                     规定单元边沿与其内容之间的空白 ， 默认1像素
+cellspacing     像素值                     规定单元格之间的空白 ， 默认2像素
+width           像素值或百分比              规定表格的宽度
+
+
+<thead>
+    表格头部区域  <tr>  <th>   </th>    <th>   </th>   </tr>
+</thead>
+<tbody>
+    表格主体区域
+</tbody>
+
+
+
+无序列表 
+<ul>
+    <li> </li>
+    <li></li>
+</ul>
+
+1.无需列表的各个列表项之间没有顺序级别之分 ， 是并列的
+2.<ul></ul> 中只能嵌套<li></li>   ，直接在<ul></ul> 标签中输入其它标签或者文字的做法都是不被允许的
+
+
+有序列表 
+<ol>
+    <li> </li>
+    <li></li>
+</ol>
+1.<ol></ol> 中只能嵌套<li></li>   ，直接在<ol></ol> 标签中输入其它标签或者文字的做法都是不被允许的
+2.<li>与</li> 之间相当于一个容器 ， 可以容纳所有元素
+
+
+自定义列表
+<dl>
+    <dt>                </dt>
+    <dd>                </dd>
+    <dd>                </dd>
+</dl>
+
+
+
+表单 
+
+    一个完整的表单 通常由  表单域 ， 表单空间 ， 提示信息  三个部分组成
+
+
+    表单域 是一个包含表单元素的区域 
+                在HTML标签中 ， <form> 标签用于定义表单域 ， 以实现用户信息的收集和传递
+                    <form> 会把它范围内的表单元素信息提交给服务器
+
+            <form action = "url地址" method = "提交方式" name = "表单域名称">
+
+                各种表单元素控件
+
+            </form>
+
+            属性 ：             属性值              作用
+            action              url地址             用于指定接受并处理表单数据的服务器程序的url地址
+            method              get/post           用于设置表单数据的提交方式 ， 其取值为 get 或post
+            name                名称                用于指定表单的名称 ， 以区分同一个界面中的多个表单域
+
+
+
+    表单控件 
+
+            <input>   表单元素   输入表单元素
+            type属性的属性值
+                <button>            定义可点击的按钮 ， 多数情况下， 用于通过js启动脚本</button>
+                <checkbox>          定义复选框</checkbox>
+                <file>              定义输入字段 和浏览 按钮  ， 供文件上传</file>
+                <hidden>            定义隐藏的输入字段</hidden>
+                <image>             定义图像形式的提交按钮</image>
+                <password>          定义密码字段 ， 该字段中的字符被掩码</password>
+                <radio>             定义单选按钮</radio>
+                <reset>             定义重置按钮 ， 重置 按钮会清除表单中的所有数据</reset>
+                <submit>            定义提交按钮 ， 提交按钮会把表单数据发送到服务器</submit>
+                <text>              定义单行的输入字段 ， 用户可在其中输入文本 ， 默认宽度为20字符</text>
+                <name>              由用户自定义        定义input元素的名称</name>
+                <value>             由用户自定义        规定input元素的值</value>
+                <checked>           checked           规定此input元素首次加载时应当被选中</checked>
+                <maxlength>         正整数              规定输入字段中的字符的最大长度</maxlength>
+
+            name 和 value 是每个表单元素都有的属性值 ， 主要给后台人员使用
+            name表单元素的名字 ， 要求单选按钮 和复选框要有相同的name值
+
+            <label> 标签为input元素定义标注（标签）</label>
+            <label for = "text" > 用户名 ：</label> <input type = "text" id = "text">
+
+            label 标签用于绑定一个表单元素 ， 当点击 label 标签内的文本是 ， 浏览器就会自动将光标移动到对应的表单元素上 ， 用来增加用户体验
+            label标签的for属性应当与相关元素的 id属性相同
+
+            
+            <select> 在页面中，如果有多个选择让用户选择 ， 并且想要节约页面空间是 ， 使用select下拉表单元素</select>
+
+            <select>
+                <option>    </option>
+                <option>    </option>
+                <option>    </option>
+            </select  selected = "selected ">
+
+
+
+
+            <textarea>在表单域中可以定义各种表单元素 ， 这些表单元素就是允许用户在表单中输入或者选择的内容控件</textarea>
+            当用户输入内容较多   用 <textarea></textarea>
+            <textarea name="" id="" cols="30" rows="10">
+                文本内容     
+            </textarea>
