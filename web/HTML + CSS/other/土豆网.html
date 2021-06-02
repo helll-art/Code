@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin : 0;
+            padding : 0;
+        }
+
+        .tudou {
+            position: relative;
+            width: 579px;
+            height: 772px;
+            background-color: pink;
+            margin : 100px auto;
+        }
+        .tudou img {
+            width: 100%;
+            height: 100%;
+
+        }
+        .mask {
+            display : none;
+            position : absolute;
+            width: 100%;
+            height: 100%;
+            top :0;
+            left : 0;
+            background : rgba(0,0,0,0.3) url("https://img1.baidu.com/it/u=2604490887,2700835670&fm=26&fmt=auto&gp=0.jpg") no-repeat center;
+            
+            
+        }
+        
+        .tudou:hover .mask {
+            display : block;
+        }
+    </style>
+</head>
+<body>
+    <div class="tudou">
+        <img src = "https://pic0.iqiyipic.com/image/20210525/a6/dd/a_100458350_m_601_m6_579_772.jpg?caplist=jpg,webp">
+        <div class="mask">
+            <img src = "https://img1.baidu.com/it/u=2604490887,2700835670&fm=26&fmt=auto&gp=0.jpg">
+        </div>
+    </div>
+</body>
+</html>

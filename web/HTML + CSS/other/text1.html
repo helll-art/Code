@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    
+</body>
+<script>
+    class Student {
+        constructor(name) {
+            this.name = name;
+        }
+        hello() {
+            alert("Hello");
+        }
+    }
+
+    var xiaoming = new Student("xiaoming");
+    class XStudent extends Student {
+        constructor(name , grade) {
+            super(name);
+            this.grade = grade;
+        }
+        MyGrade() {
+            alert("我是小学生");
+        }
+    }
+    var xiaohong = new XStudent("xiaohong",11);
+</script>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>淘宝轮播图</title>
+    <style>
+        * {
+            margin : 0;
+            padding : 0;
+        }
+        li {
+            list-style: none;
+        }
+        .tb-promo {
+            position: relative;
+            width: 520px;
+            height: 280px;
+            
+            margin : 200px auto;
+        }
+        .next , .prev {
+            position : absolute;
+            margin-top : -15px;
+            width: 20px;
+            height: 30px;
+            top : 50%;
+            background-color : rgba(0,0,0,0.3);
+            color : white;
+            font-weight: 900;
+            text-align: center;
+            line-height: 30px;
+            text-decoration: none;
+        }
+        .next {
+            left : 0;
+            border-top-right-radius: 15px;
+            border-bottom-right-radius: 15px;
+        }
+        .prev {
+            right : 0;
+            border-top-left-radius: 15px;
+            border-bottom-left-radius: 15px;
+        }
+        .promo-nav {
+            position : absolute;
+            bottom : 15px;
+            left : 50%;
+            margin-left : -40px;
+            width: 80px;
+            height: 15px;
+            background-color:rgba(0,0,0,0.3);
+            border-radius: 7px;
+            line-height: 15px;
+        }
+        .promo-nav li{
+            float : left;
+            border-radius: 5px;
+            height: 10px;
+            width: 10px;
+            background-color : white;
+            margin : 3px ;
+        }
+        .promo-nav li a {
+            display :block;
+            height: 10px;
+            width: 10px;
+        }
+        .promo-nav li a:hover {
+            background-color :tomato;
+            border-radius: 7px;
+        }
+    </style>
+</head>
+<body>
+    <div class = "tb-promo">
+        <img src = "https://img.alicdn.com/imgextra/i2/6000000007049/O1CN01Ic9GP921wUY9GoIMi_!!6000000007049-2-octopus.png">
+        
+        <a href = "#" class = "prev">&gt;</a>
+    
+        <a href = "#" class = "next">&lt;</a>
+        
+        <ul class = "promo-nav">
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+            <li><a href="#"></a></li>
+        </ul>
+    </div>
+</body>
+</html>
