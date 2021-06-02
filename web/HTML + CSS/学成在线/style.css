@@ -1,0 +1,269 @@
+* {
+    margin : 0;
+    padding : 0;
+}
+li {
+    list-style: none;
+}
+.top {
+    height: 40px;
+    background-color : black;
+}
+body {
+    background-color: #f1eff7;
+}
+.nav {
+    height: 100px;
+    width: 1600px;
+    
+    
+    margin : 0 auto;
+}
+.nav img {
+    float : left;
+    margin-top : 29px;
+    margin-left : 100px;
+}
+.nav>a {
+    float : left;
+    width : 100px;
+    height : 100px;
+    font-size : 20px;
+    color : #4c4c4c;
+    text-decoration : none;
+    text-align: center;
+    line-height: 100px;
+}
+.nav a:hover{
+    background-color: #a59e9e;
+}
+.nav .right-nav {
+    
+    text-align : center;
+    
+    float : right;
+}
+.right-nav input {
+    float :left;
+    width: 200px;
+    height: 38px;
+    margin-top : 29px;
+    color :#4c4c4c;
+    border-color : blue;
+    border-width: 1px;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+.nav .right-nav img {
+    width: 50px;
+    float : left;
+    margin-left : 0px;
+    
+}
+.nav .right-nav a {
+    font-size : 20px;
+    color : #4c4c4c;
+    text-decoration : none;
+    text-align: center;
+    line-height: 100px;
+    margin-right : 80px;
+}
+.end_nav {
+    float : left;
+    
+}
+.end_nav p {
+    float : left;
+    width : 100px;
+    height : 100px;
+    line-height: 100px;
+    font-size : 20px;
+    color : #4c4c4c;
+}
+.__end_nav {
+    float : left;
+}
+
+
+
+.jiemian1 {
+    background-color: rgb(11, 11, 172);
+    height: 420px;
+    
+}
+.cebianlan {
+    float : left;
+    height: 420px;
+    width: 300px;
+    background-color: rgb(31, 4, 95);
+    margin : 0 auto ;
+    margin-left : 204px;
+}
+
+.cebianlan ul a{
+    text-decoration: none;
+    line-height: 45px;
+    font-size : 20px;
+    color : white;
+   text-indent:  2em;
+}
+.cebianlan ul a:hover {
+    background-color: white;
+}
+.cebianlan_img{
+    float : left;
+}
+.kechengbiao {
+    position:absolute;
+    height: 300px;
+    width: 250px;
+    float : right;
+    top :200px;
+    right : 204px;
+    background-color: white;
+}
+.kechengbiao .kechengbiao_top {
+    background-color: rgb(92, 153, 194);
+    height: 60px;
+    font-weight: 700;
+    font-size : 28px;
+    line-height: 60px;
+    text-align : center;
+    color : white;
+}
+.kechengbiao li{
+    display :inline-block;
+    height: 60px;
+    background-color : white;
+    text-decoration: none;
+}
+.kechengbiao h4 {
+    display :inline-block;
+    font-weight: 600;
+    font-size : 20px;
+    color : black;
+
+}
+.kechengbiao span {
+    margin-left : 5px;
+    display :inline-block;
+    font-weight: 400;
+    font-size : 15px;
+    color : black;
+}
+.kechengbiao p {
+    display :inline-block;
+    line-height: 20px;
+    font-size : 12px;
+    color : black;
+    text-decoration: none;
+}
+.kechengbiao_bottom {
+    height: 40px;
+    width: 100px;
+    
+    border : 1px solid rgb(39, 119, 223) ;
+    margin : 0 auto ;
+    margin-top :10px;
+    font-size : 15px;
+    line-height: 40px;
+    text-align : center;
+}
+.kechengbiao_bottom a {
+    color : rgb(39, 119, 223) ;
+    text-decoration: none;
+}
+
+
+.tuijian {
+    width: 1500px;
+    height: 50px;
+    /* border : 1px solid white; */
+    margin : 0 auto;
+}
+.tuijian a {
+    display: inline-block;
+    height: 50px;
+    width: 100px;
+    font-size : 20px;
+    line-height: 50px;
+    text-decoration: none;
+    color : black;
+    padding-left : 50px;
+}
+.tuijian .tuijian_top {
+    color :blue;
+    font-weight: 900;
+    
+}
+.tuijian .tuijian_bottom {
+    font-size : 15px;
+    float : right ;
+    line-height: 50px;
+
+}
+.jingpin {
+    width: 1500px;
+    height: 50px;
+    margin : 0 auto;
+}
+.jingpin h4 {
+    font-size : 20px;
+    line-height: 50px;
+    float : left;
+    
+}
+.jingpin p {
+    font-size : 15px;
+    line-height: 50px;
+    float : right ;
+    margin-right : 40px;
+    font-weight: 200;
+}
+.jingpin a {
+    text-decoration: none;
+    color : black;
+}
+
+.bottom {
+    width: 1500px;
+    height: 400px;
+    
+    margin : 0 auto ;
+}
+.bottom .bottom_box {
+    float : left;
+    width: 280px;
+    height: 400px;
+    background-color: white;
+    margin-right : 25px;
+}
+ .bottom_box_bottom {
+    float : right;
+    width: 280px;
+    height: 400px;
+    background-color: white;
+}
+.bottom_box h5 {
+    font-weight: 400;
+    font-size : 20px;
+    margin : 30px 20px ;
+    
+}
+.bottom_box span {
+    display :inline-block;
+    text-indent : 2em ;
+    font-size : 13px;
+    color :coral;
+    margin-top : 30px;
+}
+.bottom_box p {
+    display : inline-block;
+    color : black ;
+    font-size : 12px;
+    margin-top : 30px;
+}
+.bottom_box img {
+    width: 280px;
+
+}
